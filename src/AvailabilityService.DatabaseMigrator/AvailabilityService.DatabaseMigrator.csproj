@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <AssemblyName>AvailabilityService.DatabaseMigrator</AssemblyName>
+        <RootNamespace>AvailabilityService.DatabaseMigrator</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="..\..\..\..\.dockerignore">
+            <Link>.dockerignore</Link>
+            <DependentUpon>Dockerfile</DependentUpon>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\AvailabilityService.Database\AvailabilityService.Database.csproj" />
+    </ItemGroup>
+
+</Project>
