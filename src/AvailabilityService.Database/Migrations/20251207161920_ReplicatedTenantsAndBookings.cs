@@ -91,7 +91,7 @@ namespace AvailabilityService.Database.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
                     StartDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     BookingStatus = table.Column<int>(type: "integer", nullable: false),
@@ -115,14 +115,19 @@ namespace AvailabilityService.Database.Migrations
                 column: "BookingStatus");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bookings_OwnerId",
+                table: "Bookings",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Bookings_TenantId",
                 table: "Bookings",
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_TenantId_CustomerId",
+                name: "IX_Bookings_TenantId_OwnerId",
                 table: "Bookings",
-                columns: new[] { "TenantId", "CustomerId" });
+                columns: new[] { "TenantId", "OwnerId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_TenantId_StartDateTime_EndDateTime",

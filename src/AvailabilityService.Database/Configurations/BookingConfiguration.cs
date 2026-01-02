@@ -18,7 +18,7 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
         builder.Property(e => e.TenantId)
             .IsRequired();
 
-        builder.Property(e => e.CustomerId)
+        builder.Property(e => e.OwnerId)
             .IsRequired();
 
         builder.Property(e => e.StartDateTime)
@@ -40,7 +40,8 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
 
         // Indexes
         builder.HasIndex(e => e.TenantId);
-        builder.HasIndex(e => new { e.TenantId, e.CustomerId });
+        builder.HasIndex(e => e.OwnerId);
+        builder.HasIndex(e => new { e.TenantId, e.OwnerId });
         builder.HasIndex(e => new { e.TenantId, e.StartDateTime, e.EndDateTime });
         builder.HasIndex(e => e.BookingStatus);
 

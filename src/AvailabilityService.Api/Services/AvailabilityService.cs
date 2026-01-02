@@ -36,15 +36,21 @@ public class AvailabilityService(
 
             var dayWorkingHours = workingHoursList.FirstOrDefault(wh => wh.Day == dayOfWeek);
 
+            // If no working hours defined, provider is available 24/7 (full day)
+            DateTime workingStart, workingEnd;
             if (dayWorkingHours == null || dayWorkingHours.StartTime == dayWorkingHours.EndTime)
             {
-                continue;
+                // 24/7 availability for this day
+                workingStart = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+                workingEnd = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59, DateTimeKind.Utc);
             }
-
-            var workingStart = new DateTime(date.Year, date.Month, date.Day,
-                dayWorkingHours.StartTime.Hour, dayWorkingHours.StartTime.Minute, 0, DateTimeKind.Utc);
-            var workingEnd = new DateTime(date.Year, date.Month, date.Day,
-                dayWorkingHours.EndTime.Hour, dayWorkingHours.EndTime.Minute, 0, DateTimeKind.Utc);
+            else
+            {
+                workingStart = new DateTime(date.Year, date.Month, date.Day,
+                    dayWorkingHours.StartTime.Hour, dayWorkingHours.StartTime.Minute, 0, DateTimeKind.Utc);
+                workingEnd = new DateTime(date.Year, date.Month, date.Day,
+                    dayWorkingHours.EndTime.Hour, dayWorkingHours.EndTime.Minute, 0, DateTimeKind.Utc);
+            }
 
             // Collect time blocks for this day
             var timeBlockPeriods = new List<(DateTime Start, DateTime End)>();
@@ -235,16 +241,9 @@ public class AvailabilityService(
         var workingHours = await workingHoursRepository.GetWorkingHoursByTenantAsync(tenantId);
         var workingHoursForDays = workingHours.Where(wh => wh.Day == startTime.DayOfWeek).ToList();
 
-        if (workingHoursForDays.Count == 0)
-        {
-            conflicts.Add(new ConflictInfo
-            {
-                Type = ConflictType.WorkingHours,
-                OverlapStart = startTime,
-                OverlapEnd = endTime
-            });
-        }
-        else
+        // If no working hours are defined, provider is available 24/7
+        // Only check conflicts if working hours are explicitly set
+        if (workingHoursForDays.Count > 0)
         {
             foreach (var dayWorkingHours in workingHoursForDays)
             {

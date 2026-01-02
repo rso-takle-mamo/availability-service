@@ -615,9 +615,36 @@ else
 | `JWT_SECRET_KEY` | Yes | JWT signing key (minimum 128 bits) |
 | `ASPNETCORE_ENVIRONMENT` | No | Environment (Development/Production) |
 | `GRPC_URL` | No | gRPC service URL (default: http://localhost:5003) |
+| `KAFKA__BOOTSTRAPSERVERS` | Yes | Kafka bootstrap servers |
+| `KAFKA__TENANTEVENTSTOPIC` | Yes | Tenant events topic (consumer) |
+| `KAFKA__BOOKINGEVENTSTOPIC` | Yes | Booking events topic (consumer) |
+| `KAFKA__CONSUMERGROUPID` | Yes | Kafka consumer group ID |
+| `KAFKA__ENABLEAUTOCOMMIT` | Yes | Kafka auto-commit setting |
+| `KAFKA__AUTOOFFSETRESET` | Yes | Kafka auto offset reset |
 
 ## Health Checks
 
 - `GET /health` - Complete health check including database
 - `GET /health/live` - Basic service liveness check
 - `GET /health/ready` - Readiness check for dependencies
+
+## Kafka Events
+
+The Availability Service acts as a **Kafka Consumer** only (for tenant and booking events).
+
+### Consumed Events
+
+| Event Type | Topic | Handler | Description |
+|------------|-------|---------|-------------|
+| `TenantCreatedEvent` | `tenant-events` | `TenantEventService` | Creates tenant in local database |
+| `TenantUpdatedEvent` | `tenant-events` | `TenantEventService` | Updates tenant in local database |
+| `BookingCreatedEvent` | `booking-events` | `BookingEventService` | Creates booking in local database |
+| `BookingCancelledEvent` | `booking-events` | `BookingEventService` | Updates booking status to Cancelled in local database |
+
+### Consumer Configuration
+
+- **Auto Commit**: `false` (manual offset management)
+- **Offset Reset**: `earliest` (read from beginning)
+- **Consumer Groups**:
+  - `availability-service-tenant-events` (for tenant events)
+  - `availability-service-booking-events` (for booking events)

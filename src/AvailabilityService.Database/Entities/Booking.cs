@@ -14,7 +14,7 @@ public class Booking
 {
     public Guid Id { get; set; }
     public Guid TenantId { get; set; }
-    public Guid CustomerId { get; set; }
+    public Guid OwnerId { get; set; }
     public DateTime StartDateTime { get; set; }
     public DateTime EndDateTime { get; set; }
     public BookingStatus BookingStatus { get; set; }
