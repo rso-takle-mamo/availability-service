@@ -17,7 +17,7 @@ public class StringEnumAttribute : ValidationAttribute
     {
         if (value == null)
         {
-            return ValidationResult.Success; // Use Required attribute for null checks
+            return ValidationResult.Success;
         }
 
         if (value is not string stringValue)
@@ -25,12 +25,6 @@ public class StringEnumAttribute : ValidationAttribute
             return new ValidationResult("Value must be a string.");
         }
 
-        // Case-insensitive comparison
-        if (_allowedValues.Contains(stringValue, StringComparer.OrdinalIgnoreCase))
-        {
-            return ValidationResult.Success;
-        }
-
-        return new ValidationResult(ErrorMessage);
+        return _allowedValues.Contains(stringValue, StringComparer.OrdinalIgnoreCase) ? ValidationResult.Success : new ValidationResult(ErrorMessage);
     }
 }

@@ -74,6 +74,20 @@ The Availability Service manages provider availability, working hours, and time 
 - `FK_TimeBlocks_Tenants_TenantId` → `Tenants(Id)` (ON DELETE CASCADE)
 - `FK_Bookings_Tenants_TenantId` → `Tenants(Id)` (ON DELETE CASCADE)
 
+## Working Hours Behavior
+
+**Important:** Days without working hours defined are treated as **FREE days** (unavailable for booking).
+
+- If a provider has working hours defined for Monday-Friday (9:00-17:00), but Saturday and Sunday have NO working hours entries, then Saturday and Sunday are unavailable for booking.
+- To make a day available, you MUST explicitly define working hours for that day.
+- Use the `isWorkFree: true` option in the weekly schedule bulk endpoint to explicitly mark days as free.
+
+### Working Hours Validation Rules
+
+1. **Defined working hours** (`StartTime != EndTime`): Provider is available within the specified time range
+2. **No working hours defined**: Provider is NOT available (free day)
+3. **Zero-length working hours** (`StartTime == EndTime`): Treated as if no working hours are defined (free day)
+
 ## API Endpoints
 
 ### Availability Endpoints (`/api/availability`)
@@ -90,6 +104,7 @@ Authorization: Bearer <token>
 - **CUSTOMERS:** Must provide tenantId query parameter. Can check availability for any tenant.
 - **PROVIDERS:** Cannot provide tenantId parameter. Can only check availability for their own tenant.
 - Date range cannot exceed 1 month
+- **Working Hours Behavior:** Days with NO working hours defined are treated as FREE days (unavailable for booking)
 
 **Parameters:**
 - `tenantId` (GUID, required for customers, forbidden for providers)
